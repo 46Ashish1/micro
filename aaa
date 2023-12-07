@@ -1,0 +1,812 @@
+#add
+.model small
+.386
+.data
+no1 dd 00000000H
+no2 dd 00000000H
+no3 dd 00000000H
+msg1 db 10,13,"Enter the first no.:: $"
+msg2 db 10,13,"Enter the second no.:: $"
+msg3 db 10,13,"The Resultant sum is:: $"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN: MOV AH,01;1ST NO ENTERED
+INT 21H
+CMP AL,'A'
+JGE L2
+SUB AL,30H
+SHL EBX,4
+ADD BL,AL
+LOOP AGAIN
+MOV no1,EBX
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN1:MOV AH,01 ;2ND NO ENTERED
+INT 21H
+CMP AL,'A'
+JGE L2
+SUB AL,30H
+SHL EBX,4
+ADD BL,AL
+LOOP AGAIN1
+MOV no2,EBX
+mov ax, word ptr no1
+mov dx, word ptr no2
+add al,dl
+daa
+mov bl,al
+mov al,ah
+adc al,dh
+daa
+mov bh,al
+mov word ptr no3,bx
+mov ax, word ptr no1+2
+mov dx, word ptr no2+2
+adc al,dl
+daa
+mov bl,al
+mov al,ah
+adc al,dh
+daa
+mov bh,al
+mov word ptr no3+2,bx
+mov ebx,no3
+mov ah,09h
+mov dx,offset msg3
+int 21h
+jnc l6
+mov ah,02h
+mov dl,"1"
+int 21h
+l6: MOV CX,8
+AGAIN2: ROL EBX,4
+MOV DL,BL
+AND DL,0FH
+ADD DL,30H
+MOV AH,02
+INT 21H
+LOOP AGAIN2
+L2:.EXIT
+END
+
+#subs
+.model small
+.386
+.data
+no1 dd 00000000H
+no2 dd 00000000H
+no3 dd 00000000H
+msg1 db 10,13,"Enter the first no.:: $"
+msg2 db 10,13,"Enter the second no.:: $"
+msg3 db 10,13,"The Resultant output is:: $"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN: MOV AH,01; 1ST NO ENTERED
+INT 21H
+CMP AL,'A'
+JGE L2
+SUB AL,30H
+SHL EBX,4
+SUB BL,AL
+LOOP AGAIN
+MOV no1,EBX
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN1:MOV AH,01; 2ND NO ENTERED
+INT 21H
+CMP AL,'A'
+JGE L2
+SUB AL,30H
+SHL EBX,4
+SUB BL,AL
+LOOP AGAIN1
+MOV no2,EBX
+mov ax, word ptr no1
+mov dx, word ptr no2
+add al,dl
+daa
+mov bl,al
+mov al,ah
+adc al,dh
+daa
+mov bh,al
+mov word ptr no3,bx
+mov ax, word ptr no1+2
+mov dx, word ptr no2+2
+adc al,dl
+daa
+mov bl,al
+mov al,ah
+adc al,dh
+daa
+mov bh,al
+mov word ptr no3+2,bx
+mov ebx,no3
+mov ah,09h
+mov dx,offset msg3
+int 21h
+jnc l6
+mov ah,02h
+mov dl,"1"
+int 21h
+l6: MOV CX,8
+AGAIN2: ROL EBX,4
+MOV DL,BL
+AND DL,0FH
+SUB DL,30H
+MOV AH,02
+INT 21H
+LOOP AGAIN2
+L2:.EXIT
+END
+
+#multi
+.model small
+.386
+.data
+DATA1 dd 00000000H
+DATA2 dd 00000000H
+PROD1 dd ?
+PROD2 dd ?
+msg db 10,13,"Enter the first no.::$"
+msg1 db 10,13,"Enter the second no.::$"
+msg2 db 10,13,"The product(in hexadecimal)is::$"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN: MOV AH,01; 1ST NO. ENTERED
+INT 21H
+CMP AL,'A'
+JGE L5
+SUB AL,30H
+JMP L6
+L5: SUB AL,37H
+L6: SHL EBX,4
+ADD BL,AL
+LOOP AGAIN
+MOV DATA1,EBX
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN1: MOV AH,01; 2ND NO. ENTERED
+INT 21H
+CMP AL,'A'
+JGE L7
+SUB AL,30H
+JMP L8
+L7: SUB AL,37H
+L8: SHL EBX,4
+ADD BL,AL
+LOOP AGAIN1
+MOV DATA2,EBX
+MOV EBX,0
+MOV EDX,0
+MOV EAX,0
+MOV EAX,DATA1
+MOV EBX,DATA2
+MUL EBX
+MOV PROD1,EDX
+MOV PROD2,EAX
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV EBX,PROD1
+MOV CX,8
+AGAIN2:ROL EBX,4
+MOV DL,BL
+AND DL,0FH; to o/p the result
+CMP DL,9
+JBE L1
+ADD DL,37H
+MOV AH,02
+INT 21H
+JMP L2
+L1:ADD DL,30H
+MOV AH,02
+INT 21H
+L2: LOOP AGAIN2
+MOV EBX,PROD2
+MOV CX,8
+AGAIN3: ROL EBX,4
+MOV DL,BL
+AND DL,0FH; to o/p the result
+CMP DL,9
+JBE L3
+ADD DL,37H
+MOV AH,02
+INT 21H
+JMP L4
+L3:ADD DL,30H
+MOV AH,02
+INT 21H
+L4: LOOP AGAIN3
+.EXIT
+END
+
+#divi
+model small
+.386
+.data
+DATA1 dd 00000000H
+DATA2 dd 00000000H
+REM dd ?
+QUO dd ?
+msg db 10,13,"Enter the first no.::$"
+msg1 db 10,13,"Enter the second no.::$"
+msg2 db 10,13,"The Remainder is ::$"
+msg3 db 10,13,"The Quoitent is ::$"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN: MOV AH,01;1ST NO. ENTERED
+INT 21H
+CMP AL,'A'
+JGE L5
+JMP L6
+L5:SUB AL,37H
+L6: SUB AL,30H
+SHL EBX,4
+ADD BL,AL
+LOOP AGAIN
+MOV DATA1,EBX
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV EBX,0
+MOV CX,8
+AGAIN1:MOV AH,01; 2nd NO. ENTERED
+INT 21H
+CMP Al,'A'
+JGE L7
+SUB AL,30H
+JMP L8
+L7: SUB AL,37H
+L8:SHL EBX,4
+ADD BL,AL
+LOOP AGAIN1
+MOV DATA2,EBX
+MOV EBX,0
+MOV EDX,0
+MOV EAX,0
+MOV EAX,DATA1
+MOV EBX,DATA2
+DIV EBX
+MOV REM,EDX; REM=REMAINDER
+MOV QUO,EAX; QUO=QUOITENT
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV EBX,REM
+MOV CX,8
+AGAIN2:ROL EBX,4
+MOV DL,BL
+AND DL,0FH; to o/p the result in rem
+CMP DL,9
+JBE L1
+ADD DL,37H
+INT 21H
+JMP L2
+L1:ADD DL,30H
+MOV AH,02
+INT 21H
+L2:LOOP AGAIN2
+MOV AH,09
+MOV DX,OFFSET msg3
+INT 21H
+MOV EBX,QUO
+MOV CX,8
+AGAIN3: ROL EBX,4
+MOV DL,BL
+AND DL,0FH; to o/p the result in quo
+CMP DL,9
+JBE L3
+ADD DL,37H
+MOV AH,02
+INT 21H
+JMP L4
+L3:ADD DL,30H
+MOV AH,02
+INT 21H
+L4:LOOP AGAIN3
+.EXIT
+END
+
+#add-arr
+.model small
+.386
+.data
+A1 DB 20 DUP(?)
+A2 DB 20 DUP(?)
+DATA1 dw 0000H
+DATA2 DW 0000H
+msg1 db 10,13,"Enter the size of the arrays:: $"
+msg2 db 10,13,"Enter the first array:: $"
+msg3 db 10,13,"The entered array is:: $"
+msg4 db 10,13,"Enter the second array:: $"
+msg5 db 10,13,"The sum of both array is::$"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV CX,2
+L4:MOV AH,01
+INT 21H
+CMP AL,'A'
+JGE L9
+SUB AL,30H
+JMP L8
+L9:SUB AL,37H
+L8:SHL BX,4
+ADD BL,AL
+LOOP L4
+MOV AL,BL
+MOV CL,AL
+MOV AH,0
+MOV DATA1,AX
+MOV CX,DATA1
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV AH,0
+MOV CX,DATA1
+LEA SI,A1
+L1:MOV DL,0AH; JUMP ONTO NEXT LINE
+MOV AH,02H
+INT 21H
+MOV AH,01H
+INT 21H
+SUB AL,30H
+MOV[SI],AL
+INC SI
+LOOP L1
+MOV AH,09H
+MOV DX,OFFSET msg3
+INT 21H
+MOV CX,DATA1
+LEA SI,A1
+L2: mov ah,02h
+mov dl,0ah
+int 21h
+MOV DL,[SI]
+ADD DL,30h
+MOV AH,02
+INT 21H
+INC SI
+LOOP L2
+MOV CX,DATA1
+MOV AH,09
+MOV DX,OFFSET msg4
+INT 21H
+MOV AH,0
+LEA DI,A2
+L3: MOV DL,0AH; jump onto next line
+MOV AH,02H
+INT 21H
+MOV AH,01H
+INT 21H
+SUB AL,30H
+MOV [DI],AL
+INC DI
+LOOP L3
+MOV AH,09H
+MOV DX,OFFSET msg3
+INT 21H
+MOV CX,DATA1
+LEA DI,A2
+L14: mov ah,02h
+mov dl,0ah
+int 21h
+mov dl,0dh
+int 21h
+MOV DX,[DI]
+ADD DL,30h
+MOV AH,02
+INT 21H
+INC DI
+LOOP L14
+LEA SI,A1
+LEA DI,A2
+MOV CX,DATA1
+ADDA:MOV AL,[SI]
+ADD AL,[DI]
+
+MOV[SI],AL
+INC DI
+INC SI
+LOOP ADDA
+MOV AH,09H
+MOV DX,OFFSET msg5
+INT 21H
+MOV CX,DATA1
+LEA SI,A1
+L5: mov ah,02h
+mov dl,0ah
+int 21h
+MOV DATA2, CX
+MOV CX,2
+MOV BL,[SI]
+ADDA1:ROL BL,4
+MOV DL,BL
+AND DL,0FH
+CMP DI,9
+JA L6
+ADD DL,30h
+JMP L7
+L6:ADD DL,37H
+L7: MOV AH,02
+INT 21H
+LOOP ADDA1
+MOV CX,DATA2
+INC SI
+LOOP L5
+.EXIT
+END
+
+#subs-arr
+.model small
+.386
+.data
+A1 DB 20 DUP(?)
+A2 DB 20 DUP(?)
+DATA1 dw 0000H
+DATA2 DW 0000H
+msg1 db 10,13,"Enter the size of the arrays:: $"
+msg2 db 10,13,"Enter the first array:: $"
+msg3 db 10,13,"The entered array is:: $"
+msg4 db 10,13,"Enter the second array:: $"
+msg5 db 10,13,"The difference of both array is::$"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV CX,2
+L4:MOV AH,01
+INT 21H
+CMP AL,'A'
+JGE L9
+SUB AL,30H
+JMP L8
+L9:SUB AL,37H
+L8:SHL BX,4
+SUB BL,AL
+LOOP L4
+MOV AL,BL
+MOV CL,AL
+MOV AH,0
+MOV DATA1,AX
+MOV CX,DATA1
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H;
+MOV AH,0
+MOV CX,DATA1
+LEA SI,A1
+L1:MOV DL,0AH; JUMP ONTO NEXT LINE
+MOV AH,02H
+INT 21H
+MOV AH,01H
+INT 21H
+SUB AL,30H
+MOV[SI],AL
+INC SI
+LOOP L1
+MOV AH,09H
+MOV DX,OFFSET msg3
+INT 21H
+MOV CX,DATA1
+LEA SI,A1
+L2:mov ah,02h
+mov dl,0ah
+int 21h
+MOV DL,[SI]
+SUB DL,30h
+MOV AH,02
+INT 21H
+INC SI
+LOOP L2
+MOV CX,DATA1
+MOV AH,09
+MOV DX,OFFSET msg4
+INT 21H
+MOV AH,0
+LEA DI,A2
+L3:MOV DL,0AH; jump onto next line
+MOV AH,02H
+INT 21H
+MOV AH,01H
+INT 21H
+SUB AL,30H
+MOV [DI],AL
+INC DI
+LOOP L3
+MOV AH,09H
+MOV DX,OFFSET msg3
+INT 21H
+MOV CX,DATA1
+LEA DI,A2
+L14:mov ah,02h
+mov dl,0ah
+int 21h
+mov dl,0dh
+int 21h
+MOV DX,[DI]
+SUB DL,30h
+MOV AH,02
+INT 21H
+INC DI
+LOOP L14
+LEA SI,A1
+LEA DI,A2
+MOV CX,DATA1
+SUBA:MOV AL,[SI]
+SUB AL,[DI]
+MOV[SI],AL
+INC DI
+INC SI
+LOOP SUBA
+MOV AH,09H
+MOV DX,OFFSET msg5
+INT 21H
+MOV CX,DATA1
+LEA SI,A1
+L5:mov ah,02h
+mov dl,0ah
+int 21h
+MOV DATA2,CX
+MOV CX,2
+MOV BL,[SI]
+SUBA1:ROL BL,4
+MOV DL,BL
+AND DL,0FH
+CMP DI,9
+JA L6
+SUB DL,30h
+JMP L7
+L6:SUB DL,37H
+L7:MOV AH,02
+INT 21H
+LOOP SUBA1
+MOV CX,DATA2
+INC SI
+LOOP L5
+.EXIT
+ END
+
+#lin-s
+.model small
+.386
+.data
+ARRAY DW 20 DUP(?)
+DATA1 dw 0000H
+success db 10,13,"Element is present in the Array$"
+fail db 10,13,"Element is not present in the Array$"
+msg1 db 10,13,"Enter the size of array:: $"
+msg2 db 10,13,"Enter the array:: $"
+msg3 db 10,13,"Enter the element to be searched:: $"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV AH,01
+INT 21H
+SUB AL,30H
+MOV AH,0
+MOV CX,AX
+MOV DATA1,AX
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV AH,0
+MOV SI,0
+MOV BX,OFFSET ARRAY
+L1: MOV DL,0AH; jump onto next line
+MOV AH,02H
+INT 21H
+MOV DX,SI; input element of the array
+MOV AH,01H
+INT 21H
+SUB AL,30H
+;MOV SI,DX
+MOV[BX+SI],AX
+INC SI
+LOOP L1
+MOV CX,DATA1
+MOV AH,09
+MOV DX,OFFSET msg3
+INT 21H
+MOV AH,01; enter element to be searched
+INT 21H
+SUB AL,30H
+MOV SI,0
+MOV BX,OFFSET ARRAY
+L2: CMP[BX+SI],AL; linear search loop
+JZ L3; jump if element is found
+INC SI
+LOOP L2
+MOV AH,09H
+MOV DX,OFFSET fail; if the element is not found
+INT 21H
+MOV AH,4CH; to forcefully terminate the program
+INT 21H
+L3: MOV AH,09H
+MOV DX,OFFSET success ; if the element is found
+INT 21H
+MOV AH,4CH
+INT 21H
+.EXIT
+END
+
+#bin-s
+.model small
+.386
+.data
+ARRAY DW 20 DUP(?)
+DATA1 dw 0000H
+DATA2 dw 0000H
+success db 10,13,"Element is present in the Array$"
+fail db 10,13,"Element is not present in the Array$"
+msg1 db 10,13,"Enter the size of array:: $"
+msg2 db 10,13,"Enter the array:: $"
+msg3 db 10,13,"Enter the element to be searched:: $"
+.code
+.startup
+MOV AH,09
+MOV DX,OFFSET msg1
+INT 21H
+MOV AH,01
+INT 21H
+SUB AL,30H
+MOV AH,0
+MOV CX,AX
+MOV DATA1,AX
+MOV AH,09
+MOV DX,OFFSET msg2
+INT 21H
+MOV AH,0
+MOV SI,0
+MOV BX,OFFSET ARRAY
+L1: MOV DL,0AH; jump onto next line
+MOV AH,02H
+INT 21H
+MOV DX,SI; input element of the array
+MOV AH,01H
+INT 21H
+SUB AL,30H
+MOV SI,DX
+MOV[BX+SI],AX
+INC SI
+LOOP L1
+MOV AH,09
+MOV DX,OFFSET msg3
+INT 21H
+MOV AH,01; enter element to be searched
+INT 21H
+SUB AL,30H
+MOV DATA2,AX
+MOV CX,DATA1
+MOV SI,0
+MOV DI,DATA1
+MOV BP,0
+MOV BX,OFFSET ARRAY
+MOV AX,DATA1
+L2: MOV SI,DI
+ADD SI,BP
+MOV AX,SI
+MOV DL,2
+DIV DL
+MOV AH,0
+MOV DX,0
+MOV SI,AX
+MOV DX,DATA2
+CMP[BX+SI],DL
+JZ L3
+CALL L4
+LOOP L2
+MOV AH,09H
+MOV DX,OFFSET fail ; if the element is not found
+INT 21h
+MOV AH,4CH ; to forcefully terminate the program
+INT 21H
+L3: MOV AH,09H
+MOV DX,OFFSET success; if the element is found
+INT 21H
+MOV AH,4CH
+INT 21H
+L4 PROC NEAR
+CMP[BX+SI],DL
+JL L6
+MOV DI,SI
+RET
+L6: MOV BP,SI
+RET
+L4 ENDP
+.EXIT
+END
+
+#ascii-bin
+.model small
+.data
+msg db 10,13,"Enter an ASCII Character:: $"
+result db 10,13,"Result is:: $"
+.code
+.startup
+MOV DX,OFFSET msg
+MOV AH,09H
+INT 21H
+MOV AH,01H
+INT 21H
+MOV BL,AL
+MOV DX,OFFSET result
+MOV AH,09H
+INT 21H
+MOV CL,08H
+MOV AH,00H
+MOV AL,BL
+L1:SHL AL,01H
+MOV BL,AL
+MOV AL,00H
+ADC AL,30H
+MOV DL,AL
+MOV AH,02H
+INT 21H
+MOV AL,BL
+LOOP L1
+.EXIT
+END
+
+#bin-ascii
+.model small
+.data
+INPUT DB 10,13,"Enter the binary no:: $"
+OUTPUT DB 10,13,"The ASCII Character is::$"
+ARR DB ?
+.code
+.startup
+MOV AH,09H
+MOV DX,OFFSET INPUT
+INT 21H
+MOV BL,00H
+MOV CL,08H
+INPUT1: MOV AH,01H
+INT 21H
+SUB AL,30H
+SHL BL,1
+ADD BL,AL
+LOOP INPUT1
+MOV AH,09H
+LEA DX,OUTPUT
+INT 21H
+MOV AH,02H
+MOV DL,BL
+INT 21H
+.EXIT
+END
